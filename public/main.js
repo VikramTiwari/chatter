@@ -15,8 +15,8 @@ $('#prime').click(function () {
   toggleFab()
 })
 
-// Speak admin msg
-function botSpeak (text) {
+// synthesize text into audio
+function speak (text) {
   if ('speechSynthesis' in window) {
     var msg = new SpeechSynthesisUtterance(text)
     window.speechSynthesis.speak(msg)
@@ -25,8 +25,6 @@ function botSpeak (text) {
 
 // Toggle chat and links
 function toggleFab () {
-  $('.prime').toggleClass('zmdi-plus')
-  $('.prime').toggleClass('zmdi-close')
   $('.prime').toggleClass('is-active')
   $('#prime').toggleClass('is-float')
   $('.chat').toggleClass('is-visible')
@@ -35,7 +33,7 @@ function toggleFab () {
 
 // User msg
 function userSend (text) {
-  var img = '<i class="zmdi zmdi-account"></i>'
+  var img = '<i class="material-icons">face</i>'
   $('#chat_converse').append('<div class="chat_msg_item chat_msg_item_user"><div class="chat_avatar">' + img + '</div>' + text + '</div>')
   $('#chatSend').val('')
   if ($('.chat_converse').height() >= 256) {
@@ -46,8 +44,8 @@ function userSend (text) {
 
 // Admin msg
 function adminSend (text) {
-  $('#chat_converse').append('<div class="chat_msg_item chat_msg_item_admin"><div class="chat_avatar"><i class="zmdi zmdi-headset-mic"></i></div>' + text + '</div>')
-  botSpeak(text)
+  $('#chat_converse').append('<div class="chat_msg_item chat_msg_item_admin"><div class="chat_avatar"><i class="material-icons">headset_mic</i></div>' + text + '</div>')
+  speak(text)
   if ($('.chat_converse').height() >= 256) {
     $('.chat_converse').addClass('is-max')
   }
@@ -138,7 +136,7 @@ $('.fab').click(function (e) {
   }).addClass('animate')
 })
 
-// Cookies handler
+// create cookie
 function createCookie (name, value, days) {
   var expires
 
@@ -152,6 +150,7 @@ function createCookie (name, value, days) {
   document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) + expires + '; path=/'
 }
 
+// read cookie
 function readCookie (name) {
   var nameEQ = encodeURIComponent(name) + '='
   var ca = document.cookie.split(';')
@@ -163,22 +162,23 @@ function readCookie (name) {
   return null
 }
 
+// erase cookie
 function eraseCookie (name) {
   createCookie(name, '', -1)
 }
 
 // User login
 function logUser () {
-  hideChat(true)
+  showChat(false)
   $('#chat_send_email').click(function (e) {
     var email = $('#chat_log_email').val()
-    if (jQuery.trim(email) !== '' && validateEmail(email)) {
+    if (jQuery.trim(email) !== '') {
       $('.chat_login_alert').html('')
       loadBeat(true)
       createCookie('fab_chat_email', email, 100)
       if (checkEmail(email)) {
         // email exist and get and set username in session
-        hideChat(false)
+        showChat(true)
       } else {
         setTimeout(createUsername, 3000)
       }
@@ -191,7 +191,7 @@ function logUser () {
 function createUsername () {
   loadBeat(false)
   $('#chat_log_email').val('')
-  $('#chat_send_email').children('i').removeClass('zmdi-email').addClass('zmdi-account')
+  // $('#chat_send_email').children('i').removeClass('zmdi-email').addClass('zmdi-account')
   $('#chat_log_email').attr('placeholder', 'Username')
   $('#chat_send_email').attr('id', 'chat_send_username')
   $('#chat_log_email').attr('id', 'chat_log_username')
@@ -205,7 +205,7 @@ function createUsername () {
       } else {
         // save username in DB and session
         createCookie('fab_chat_username', username, 100)
-        hideChat(false)
+        showChat(true)
       }
     } else {
       $('.chat_login_alert').html('Please provide username.')
@@ -213,11 +213,8 @@ function createUsername () {
   })
 }
 
-function hideChat (hide) {
-  if (hide) {
-    $('.chat_converse').css('display', 'none')
-    $('.fab_field').css('display', 'none')
-  } else {
+function showChat (show) {
+  if (show) {
     $('#chat_head').html(readCookie('fab_chat_username'))
     // Help
     $('#fab_help').click(function () {
@@ -226,6 +223,9 @@ function hideChat (hide) {
     $('.chat_login').css('display', 'none')
     $('.chat_converse').css('display', 'block')
     $('.fab_field').css('display', 'inline-block')
+  } else {
+    $('.chat_converse').css('display', 'none')
+    $('.fab_field').css('display', 'none')
   }
 }
 
@@ -239,17 +239,8 @@ function checkUsername (username) {
   return false
 }
 
-function validateEmail (email) {
-  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
-  if (!emailReg.test(email)) {
-    return false
-  } else {
-    return true
-  }
-}
-
 if (readCookie('fab_chat_username') === null || readCookie('fab_chat_email') === null) {
   logUser()
 } else {
-  hideChat(false)
+  showChat(true)
 }

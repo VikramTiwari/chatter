@@ -1,5 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic&subset=latin,cyrillic);
-@import url(https://zavoloklom.github.io/material-design-iconic-font/css/docs.md-iconic-font.min.css);
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 /*Floating Action Button*/
 
 .fabs {
@@ -426,8 +426,8 @@ strong.chat_time {
 /*Element state*/
 
 .is-active {
-  -webkit-transform: rotate(180deg);
-  transform: rotate(180deg);
+  -webkit-transform: rotate(225deg);
+  transform: rotate(225deg);
   -webkit-transition: all 1s ease-in-out;
   transition: all 1s ease-in-out;
 }
